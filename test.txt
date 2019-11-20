@@ -1,4 +1,0 @@
-слово-word
-телефон-telephone
-номер-number
-время-time,period
