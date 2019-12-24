@@ -1,0 +1,5 @@
+﻿  uic tickets.ui
+  main.cpp
+  tickets.cpp
+  moc_tickets.cpp
+  tickets.vcxproj -> D:\Все что нуно тут\Studying\Лабы\Инфа\tickets\x64\Debug\tickets.exe
