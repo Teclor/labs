@@ -74,7 +74,8 @@ namespace _6lab
                 tmpTriangles.Add(new Tuple<Point, Point, Point>(midAB, b, midBC));
                 tmpTriangles.Add(new Tuple<Point, Point, Point>(midCA, midBC, c));
             }
-            triangles = tmpTriangles;
+            triangles = new List<Tuple<Point, Point, Point>>(tmpTriangles);
+            tmpTriangles.Clear();
         }
     }
 }
