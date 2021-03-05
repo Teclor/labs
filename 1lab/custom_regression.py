@@ -1,109 +1,65 @@
-# Simple Linear Regression on the Swedish Insurance Dataset
-from random import seed
-from random import randrange
-from csv import reader
-from math import sqrt
+import random
+import math
+import pylab as pl
+import numpy as np
+from matplotlib.colors import ListedColormap
 
 
-# Load a CSV file
-def load_csv(filename):
-    dataset = list()
-    with open(filename, 'r') as file:
-        csv_reader = reader(file)
-        for row in csv_reader:
-            if not row:
-                continue
-            dataset.append(row)
-    return dataset
+# Train data generator
+def generateData(numberOfClassEl, numberOfClasses):
+    data = []
+    for classNum in range(numberOfClasses):
+        # Choose random center of 2-dimensional gaussian
+        centerX, centerY = random.random() * 5.0, random.random() * 5.0
+        # Choose numberOfClassEl random nodes with RMS=0.5
+        for rowNum in range(numberOfClassEl):
+            data.append([[random.gauss(centerX, 0.5), random.gauss(centerY, 0.5)], classNum])
+    return data
 
 
-# Convert string column to float
-def str_column_to_float(dataset, column):
-    for row in dataset:
-        row[column] = float(row[column].strip())
+# Separate N data elements in two parts:
+#	test data with N*testPercent elements
+#	train_data with N*(1.0 - testPercent) elements
+def splitTrainTest(data, testPercent):
+    trainData = []
+    testData = []
+    for row in data:
+        if random.random() < testPercent:
+            testData.append(row)
+        else:
+            trainData.append(row)
+    return trainData, testData
 
 
-# Split a dataset into a train and test set
-def train_test_split(dataset, split):
-    train = list()
-    train_size = split * len(dataset)
-    dataset_copy = list(dataset)
-    while len(train) < train_size:
-        index = randrange(len(dataset_copy))
-        train.append(dataset_copy.pop(index))
-    return train, dataset_copy
+# Main classification procedure
+def classifyKNN(trainData, testData, k, numberOfClasses):
+    # Euclidean distance between 2-dimensional point
+    def dist(a, b):
+        return math.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
+
+    testLabels = []
+    for testPoint in testData:
+        # Claculate distances between test point and all of the train points
+        testDist = [[dist(testPoint, trainData[i][0]), trainData[i][1]] for i in range(len(trainData))]
+        # How many points of each class among nearest K
+        stat = [0 for i in range(numberOfClasses)]
+        for d in sorted(testDist)[0:k]:
+            stat[d[1]] += 1
+
+        print(sorted(testDist)[0:k])
+        # Assign a class with the most number of occurences among K nearest neighbours
+        testLabels.append(sorted(zip(stat, range(numberOfClasses)), reverse=True)[0][1])
+    return testLabels
 
 
-# Calculate root mean squared error
-def rmse_metric(actual, predicted):
-    sum_error = 0.0
-    for i in range(len(actual)):
-        prediction_error = predicted[i] - actual[i]
-        sum_error += (prediction_error ** 2)
-    mean_error = sum_error / float(len(actual))
-    return sqrt(mean_error)
+# Calculate classification accuracy
+def calculateAccuracy(nClasses, nItemsInClass, k, testPercent):
+    data = generateData(nItemsInClass, nClasses)
+    trainData, testDataWithLabels = splitTrainTest(data, testPercent)
+    testData = [testDataWithLabels[i][0] for i in range(len(testDataWithLabels))]
+    testDataLabels = classifyKNN(trainData, testData, k, nClasses)
+    print("Accuracy: ",
+          sum([int(testDataLabels[i] == testDataWithLabels[i][1]) for i in range(len(testDataWithLabels))]) / float(
+              len(testDataWithLabels)))
 
-
-# Evaluate an algorithm using a train/test split
-def evaluate_algorithm(dataset, algorithm, split, *args):
-    train, test = train_test_split(dataset, split)
-    test_set = list()
-    for row in test:
-        row_copy = list(row)
-        row_copy[-1] = None
-        test_set.append(row_copy)
-    predicted = algorithm(train, test_set, *args)
-    actual = [row[-1] for row in test]
-    rmse = rmse_metric(actual, predicted)
-    return rmse
-
-
-# Calculate the mean value of a list of numbers
-def mean(values):
-    return sum(values) / float(len(values))
-
-
-# Calculate covariance between x and y
-def covariance(x, mean_x, y, mean_y):
-    covar = 0.0
-    for i in range(len(x)):
-        covar += (x[i] - mean_x) * (y[i] - mean_y)
-    return covar
-
-
-# Calculate the variance of a list of numbers
-def variance(values, mean):
-    return sum([(x-mean)**2 for x in values])
-
-
-# Calculate coefficients
-def coefficients(dataset):
-    x = [row[0] for row in dataset]
-    y = [row[1] for row in dataset]
-    x_mean, y_mean = mean(x), mean(y)
-    b1 = covariance(x, x_mean, y, y_mean) / variance(x, x_mean)
-    b0 = y_mean - b1 * x_mean
-    return [b0, b1]
-
-
-# Simple linear regression algorithm
-def simple_linear_regression(train, test):
-    predictions = list()
-    b0, b1 = coefficients(train)
-    for row in test:
-        yhat = b0 + b1 * row[0]
-        predictions.append(yhat)
-    return predictions
-
-
-# Simple linear regression on insurance dataset
-seed(1)
-# load and prepare data
-filename = 'insurance.csv'
-dataset = load_csv(filename)
-for i in range(len(dataset[0])):
-    str_column_to_float(dataset, i)
-# evaluate algorithm
-split = 0.6
-rmse = evaluate_algorithm(dataset, simple_linear_regression, split)
-print('RMSE: %.3f' % (rmse))
+calculateAccuracy(4, 50, 10, 0.6)
