@@ -13,6 +13,7 @@ import sklearn.neighbors
 oecd_bli = pd.read_csv("oecd_bli_2015.csv", thousands=',')
 gdp_per_capita = pd.read_csv("gdp_per_capita.csv", thousands=',', delimiter='\t', encoding='latin1', na_values="n/a")
 
+
 def prepare_country_stats(oecd_bli, gdp_per_capita):
     oecd_bli = oecd_bli[oecd_bli["INEQUALITY"] == "TOT"]
     oecd_bli = oecd_bli.pivot(index="Country", columns="Indicator", values="Value")
@@ -47,16 +48,14 @@ def custom_regression_predict(X, Y, x_new):
 
 
 def custom_neighbors(X, Y, x_new, k):
-    x_len = np.zeros((len(X), 2))
-
+    x_len = np.zeros((len(X), 2), dtype=int)
     for i in range(len(X)):
         x_len[i][0] = abs(x_new - X[i][0])
         x_len[i][1] = i
     x_len = sorted(x_len, key=lambda x: x[0])
-
     res_arr = np.zeros(k)
     for i in range(k):
-        res_arr[i] = Y[int(round(x_len[i][1]))]
+        res_arr[i] = Y[(x_len[i][1])]
     res = np.mean(res_arr)
 
     return res
@@ -73,7 +72,8 @@ y = np.c_[country_stats["Life satisfaction"]]
 
 # Выработать прогноз для КИпра
 X_new = [[22587]]
-
+# ВВП на душу населения Кипра
+# выводит [[5.96242338]]
 print("Sklearn linear regression result:")
 model = sklearn.linear_model.LinearRegression()
 model.fit(X, y)
@@ -90,5 +90,19 @@ print(model.predict(X_new)[0][0])
 print("Custom k-neighbours result:")
 print(custom_neighbors(X, y, X_new[0][0], 3))
 
-# ВВП на душу населения Кипра
-# выводит [[5.96242338]]
+
+
+
+
+
+# квадрат ошибки
+# b = estimate_coef(X, y)
+# e = np.empty(len(X), dtype="float32")
+# sum_e = 0
+# for i in range(len(X)):
+#     h = b[0] + b[1] * X[i][0]
+#     e[i] = y[i][0]-h
+#     sum_e += e[i]**2
+# sum_e = sum_e / (2*len(X))
+# print(sum_e)
+
