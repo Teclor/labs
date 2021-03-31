@@ -59,15 +59,16 @@ from sklearn.pipeline import make_pipeline
 model = make_pipeline(TfidfVectorizer(), MultinomialNB())
 model.fit(train.data, train.target)
 labels = model.predict(test.data)
-print(TfidfVectorizer(test.data).get_params())
+
 from sklearn.metrics import confusion_matrix
 
 mat = confusion_matrix(test.target, labels)
+print(mat.T)
 sns.heatmap(mat.T, square=True, annot=True, fmt='d', cbar=False,
             xticklabels=train.target_names, yticklabels=train.target_names)
 plt.xlabel('true label')
 plt.ylabel('predicted label')
-#plt.show()
+plt.show()
 
 
 def predict_category(s, train=train, model=model):
