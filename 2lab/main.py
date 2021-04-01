@@ -5,7 +5,7 @@ import pandas as pd
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import confusion_matrix
 import random
-
+import sys
 
 def flip_csv(name):
     """
@@ -30,7 +30,7 @@ def prepare_housing_dataset(h, training_percent):
     for i in range(length):
         h[i]["ocean_proximity"] = ocean_values[h[i]["ocean_proximity"]]
 
-    var_quantity = 4
+    var_quantity = 5
     train_quantity = int(np.round(length * (training_percent / 100)))
     h_prepared = {"train_data": np.empty(shape=[train_quantity, var_quantity], dtype=float),
                   "train_target": np.empty(shape=train_quantity, dtype=float),
@@ -49,6 +49,7 @@ def prepare_housing_dataset(h, training_percent):
         row = h[i].astype(float)
         if np.isnan(row["total_bedrooms"]):
             row["total_bedrooms"] = 0
+        row["median_income"] = np.ceil(row["median_income"] / 1.5)
         h_prepared["train_target"][i] = np.round(row["median_house_value"] / 100000)
         h_prepared["train_data"][i] = get_prepared_row(row)
     for i in range(length-train_quantity):
@@ -67,11 +68,12 @@ def get_prepared_row(row):
     :return: np.array of data
     """
     return np.array([
-            # row["median_income"],
+            row["median_income"] if row["median_income"] > 5.0 else 5.0,
             # row["housing_median_age"],
             row["total_rooms"] / row["households"],
-            row["population"] / row["total_rooms"],
+            # row["population"] / row["total_rooms"],
             row["total_bedrooms"] / row["total_rooms"],
+            row["population"] / row["households"],
             # row["latitude"],
             # row["longitude"] + 360,
             row["ocean_proximity"],
@@ -106,11 +108,30 @@ def calculate_houses_in_price_range(res):
 
 
 def main():
+    # housing_casual = pd.read_csv("housing.csv")
+    # ocean_values = {"NEAR BAY": float(10000.0), "<1H OCEAN": float(20000.0), "NEAR OCEAN": float(0.0), "ISLAND": float(30000.0), "INLAND": float(40000.0)}
+    # length = len(housing_casual["ocean_proximity"])
+    # tmpArr = np.zeros(length)
+    # for i in range(length):
+    #     tmpArr[i] = ocean_values[housing_casual["ocean_proximity"][i]]
+    # housing_casual["ocean_proximity"] = tmpArr
+
+    # corr_matrix = housing_casual.corr()
+    # corr_matrix["median_house_value"].sort_values(ascending=False)
+    # print(corr_matrix["median_house_value"])
+    # corr_matrix.plot()
+
+    # from pandas.plotting import scatter_matrix
+    # attributes = ["median_house_value", "median_income", "total_rooms", "housing_median_age"]
+    # scatter_matrix(housing_casual[attributes], figsize=(12,8))
+    # housing_casual.plot(kind="scatter", x="median_income", y="median_house_value", alpha=0.1)
+    # plt.show()
+
     sns.set()
-    plt.figure(figsize=(16, 12))
     housing = pd.read_csv("housing_flipped.csv", index_col=0)
     housing.columns = housing.columns.astype(int)
     prepared = prepare_housing_dataset(housing, 80)
+
     model = MultinomialNB()
     model.fit(prepared["train_data"], prepared["train_target"])
 
@@ -121,12 +142,12 @@ def main():
     # print(calculate_houses_in_price_range(prepared["test_target"]))
     # {0.0: 111, 1.0: 1990, 2.0: 1280, 3.0: 445, 4.0: 197, 5.0: 105}
     print("Accuracy: " + format(accuracy, '.2f') + "%")
-    mat = confusion_matrix(prepared["test_target"], labels)
-    sns.heatmap(mat.T, square=True, annot=True, fmt='d', cbar=False,
-                xticklabels=prepared["target_names"], yticklabels=prepared["target_names"])
-    plt.xlabel('true median house value')
-    plt.ylabel('predicted median house value')
-    plt.show()
+    # mat = confusion_matrix(prepared["test_target"], labels)
+    # sns.heatmap(mat.T, square=True, annot=True, fmt='d', cbar=False,
+    #             xticklabels=prepared["target_names"], yticklabels=prepared["target_names"])
+    # plt.xlabel('true median house value')
+    # plt.ylabel('predicted median house value')
+    # plt.show()
 
     # house_params = [[8.3252, 41, 6.98412698, 1.02380952, 322,
     #           2.55555556, 37.88, 237.77, 4.0]]

@@ -106,8 +106,10 @@ def calculate_houses_in_price_range(res):
 
 
 def main():
-    print(np.round(5.49))
-    print(np.round(5.51))
+    res = 0.0
+    for i in range(100):
+        res += 1/(2**i)
+    print(res)
 
 
 if __name__ == "__main__":
