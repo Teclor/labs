@@ -71,7 +71,7 @@ def prepare_housing_dataset(h, training_percent):
     :param training_percent percent of training data
     """
     length = h.shape[1]
-    var_quantity = 6
+    var_quantity = 5
     train_quantity = int(np.round(length * (training_percent / 100)))
     h_prepared = {"train_data": np.empty(shape=[train_quantity, var_quantity], dtype=float),
                   "train_target": np.empty(shape=train_quantity, dtype=float),
@@ -150,11 +150,11 @@ def prepare_housing(h):
         "median_house_value": np.zeros(shape=size, dtype=float),
         "coords_and_ocean_proximity": np.zeros(shape=size, dtype=float),
         "bedrooms_coeff": np.zeros(shape=size, dtype=float),
-        "rooms_per_people": np.zeros(shape=size, dtype=float),
+        # "rooms_per_people": np.zeros(shape=size, dtype=float),
     }
     ocean_map = {"NEAR BAY": 1.0, "NEAR OCEAN": 0.0, "<1H OCEAN": 2.0, "ISLAND": 3.0, "INLAND": 4.0}
     for i in range(size):
-        new_names["income"][i] = h["median_income"][i]/1.5 if h["median_income"][i]/1.5 > 5.0 else 5.0
+        new_names["income"][i] = (h["median_income"][i]/1.5 if h["median_income"][i]/1.5 > 5.0 else 5.0)
         # new_names["rooms_per_house"][i] = h["total_rooms"][i] / h["households"][i] if h["total_rooms"][i] / h["households"][i] <= 8.0 else 8.1
         # new_names["near_ocean"][i] = 1.0 if h["ocean_proximity"][i] == "NEAR OCEAN" else 0.0
         # new_names["near_bay"][i] = 1.0 if h["ocean_proximity"][i] == "NEAR BAY" else 0.0
@@ -162,9 +162,9 @@ def prepare_housing(h):
         new_names["new_house"][i] = 1.0 if h["housing_median_age"][i] <= 8.0 else 0.0
         new_names["people_per_house"][i] = np.round(h["population"][i] / h["households"][i])
         new_names["median_house_value"][i] = np.round(h["median_house_value"][i] / 100000)
-        new_names["coords_and_ocean_proximity"][i] = (h["longitude"][i] + 360 + h["latitude"][i]) * ocean_map[h["ocean_proximity"][i]]
+        new_names["coords_and_ocean_proximity"][i] = ((h["longitude"][i] + 360 + h["latitude"][i]) * ocean_map[h["ocean_proximity"][i]])
         new_names["bedrooms_coeff"][i] = np.round(h["total_bedrooms"][i] / h["total_rooms"][i] if not np.isnan(h["total_bedrooms"][i]) else 1.0)
-        new_names["rooms_per_people"][i] = np.round(h["total_rooms"][i]/h["households"][i])
+        # new_names["rooms_per_people"][i] = np.round(h["total_rooms"][i]/h["households"][i])
 
     dataset = pd.DataFrame(new_names)
     return dataset
@@ -183,7 +183,7 @@ def main():
 
     plt.show()
 
-    # flip_csv("housing_new", housing_casual)
+    flip_csv("housing_new", housing_casual)
 
 
     # housing_casual = addrow(housing_casual)
@@ -202,9 +202,9 @@ def main():
     #     tmpArr[i] = ocean_values[housing_casual["ocean_proximity"][i]]
     # housing_casual["ocean_proximity"] = tmpArr
 
-    # corr_matrix = housing_casual.corr()
-    # corr_matrix["median_house_value"].sort_values(ascending=False)
-    # print(corr_matrix["median_house_value"])
+    corr_matrix = housing_casual.corr()
+    corr_matrix["median_house_value"].sort_values(ascending=False)
+    print(corr_matrix["median_house_value"])
 
     # sns.heatmap(mat.T, square=True, annot=True, fmt='d', cbar=False,
     # xticklabels=prepared["target_names"], yticklabels=prepared["target_names"])
