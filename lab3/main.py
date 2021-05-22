@@ -5,7 +5,7 @@ import numpy as np
 from pandas import DataFrame
 from sklearn.cluster import KMeans
 from sklearn.datasets import make_blobs
-
+from sklearn.manifold import TSNE
 
 def prepare_housing_dataset(h, training_percent):
     """
@@ -46,31 +46,56 @@ def prepare_housing_dataset(h, training_percent):
     return h_prepared
 
 
+def get_start_points(data):
+    length = len(data)
+    lengthElement = len(data[0])
+    minArr = np.ndarray(shape=[lengthElement, 2], dtype=int)
+    maxArr = np.ndarray(shape=[lengthElement, 2], dtype=int)
+    for it in range(lengthElement):
+        minArr[it][0] = 0
+        minArr[it][1] = 0
+    for it in range(lengthElement):
+        maxArr[it][0] = 0
+        maxArr[it][1] = 0
+
+    for it in range(length):
+        for j in range(lengthElement):
+            if data[it][j] < data[minArr[j][0]][minArr[j][1]]:
+                minArr[j] = [it, j]
+            if data[it][j] > data[maxArr[j][0]][maxArr[j][1]]:
+                maxArr[j] = [it, j]
+
+    return {"min": minArr, "max": maxArr}
+
+
+
 sns.set()
 housing = pd.read_csv("housing_new_flipped.csv", index_col=0)
 housing.columns = housing.columns.astype(int)
 prepared = prepare_housing_dataset(housing, 100)
-from sklearn.preprocessing import StandardScaler
-scaler = StandardScaler()# Fit on training set only.
-scaler.fit(prepared["train_data"])# Apply transform to both the training set and the test set.
-train_scaled = scaler.transform(prepared["train_data"])
-from sklearn.decomposition import PCA# Make an instance of the Model
-pca = PCA(.95)
-pca.fit(train_scaled)
-train_scaled = pca.transform(train_scaled)
+# from sklearn.preprocessing import StandardScaler
+# scaler = StandardScaler()# Fit on training set only.
+# scaler.fit(prepared["train_data"])# Apply transform to both the training set and the test set.
+# train_scaled = scaler.transform(prepared["train_data"])
 
-print(train_scaled)
+# from sklearn.decomposition import PCA# Make an instance of the Model
+# pca = PCA(.95)
+# pca.fit(train_scaled)
+# train_scaled = pca.transform(train_scaled)
 
-sns.lmplot(
-    x={0},
-    y={1},
-    data=DataFrame(train_scaled),
-)
-plt.show()
+# tsne = TSNE(n_components=2, init='pca', random_state=0)
+# train_scaled = tsne.fit_transform(prepared["train_data"])
+# prepared['train_data'] = train_scaled
+# print(prepared['train_data'])
 
-kmeans = KMeans(n_clusters=6, random_state=0)
+borders = get_start_points(prepared['train_data'])
+print(borders['min'])
+print(borders['max'])
+kmeans = KMeans(n_clusters=6, random_state=0, init=np.ndarray(borders['min'], borders['max']))
 
 clusters = kmeans.fit_predict(prepared['train_data'])
+
+
 
 from scipy.stats import mode
 labels = np.zeros_like(clusters)
