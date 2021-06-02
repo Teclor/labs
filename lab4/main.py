@@ -2,117 +2,170 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import confusion_matrix
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import r2_score
-
-def prepare_housing_dataset(h, training_percent):
-    """
-    Подготавливает данные из датасета housing
-    :param h pandas.DataFrame
-    :param training_percent percent of training data
-    """
-    length = h.shape[1]
-    var_quantity = 5
-    train_quantity = int(np.round(length * (training_percent / 100)))
-    h_prepared = {"train_data": np.empty(shape=[train_quantity, var_quantity], dtype=int),
-                  "train_target": np.empty(shape=train_quantity, dtype=int),
-                  "test_data": np.empty(shape=[length - train_quantity, var_quantity], dtype=int),
-                  "test_target": np.empty(shape=length - train_quantity, dtype=int),
-                  "names": np.array([
-                        "income",
-                        "rooms_per_house",
-                        "near_ocean",
-                        "near_bay",
-                        "1h_ocean",
-                        "new_house",
-                        "people_per_house",
-                        "latitude",
-                        "longitude",
-                  ]),
-                  "target_names": np.array(
-                      ["<50000$", "50 000-150 000 $", "150 000-250 000 $", "250 000-350 000 $", "350 000-450 000 $",
-                       "450 000-550 000 $"])
-                  }
-    for i in range(train_quantity):
-        row = h[i]
-        h_prepared["train_target"][i] = row["median_house_value"]
-        row = np.ceil(row.drop("median_house_value")*10)
-        h_prepared["train_data"][i] = row
-    for i in range(length - train_quantity):
-        row = h[i]
-        h_prepared["test_target"][i] = row["median_house_value"]
-        row = np.ceil(row.drop("median_house_value")*10)
-        h_prepared["test_data"][i] = row
-    return h_prepared
+import re
+from sklearn.model_selection import train_test_split
 
 
-def prepare_housing(h):
-    size = len(h["median_house_value"])
-    new_names = {
-        "income": np.zeros(shape=size, dtype=float),
-        #"rooms_per_house": np.zeros(shape=size, dtype=float),
-        "new_house": np.zeros(shape=size, dtype=float),
-        "people_per_house": np.zeros(shape=size, dtype=float),
-        "median_house_value": np.zeros(shape=size, dtype=float),
-        "coords_and_ocean_proximity": np.zeros(shape=size, dtype=float),
-        "bedrooms_coeff": np.zeros(shape=size, dtype=float),
-        # "rooms_per_people": np.zeros(shape=size, dtype=float),
+def prepare_cars_dataset(ds):
+    length = ds.shape[0]
+    strLength = ds.shape[1]
+    prepared = {
+        "year": np.empty(shape=length, dtype=int),
+        "selling_price": np.empty(shape=length, dtype=int),
+        "km_driven": np.empty(shape=length, dtype=int),
+        "fuel": np.empty(shape=length, dtype=int),
+        "seller_type": np.empty(shape=length, dtype=int),
+        "transmission": np.empty(shape=length, dtype=int),
+        "owner": np.empty(shape=length, dtype=int),
+        "mileage": np.empty(shape=length, dtype=float),
+        "engine": np.empty(shape=length, dtype=int),
+        "max_power": np.empty(shape=length, dtype=int),
+        "torque": np.empty(shape=length, dtype=int),
+        "seats": np.empty(shape=length, dtype=int),
     }
-    ocean_map = {"NEAR BAY": 1.0, "NEAR OCEAN": 0.0, "<1H OCEAN": 2.0, "ISLAND": 3.0, "INLAND": 4.0}
-    for i in range(size):
-        new_names["income"][i] = (h["median_income"][i]/1.5 if h["median_income"][i]/1.5 > 5.0 else 5.0)
-        # new_names["rooms_per_house"][i] = h["total_rooms"][i] / h["households"][i] if h["total_rooms"][i] / h["households"][i] <= 8.0 else 8.1
-        # new_names["near_ocean"][i] = 1.0 if h["ocean_proximity"][i] == "NEAR OCEAN" else 0.0
-        # new_names["near_bay"][i] = 1.0 if h["ocean_proximity"][i] == "NEAR BAY" else 0.0
-        # new_names["1h_ocean"][i] = 1.0 if h["ocean_proximity"][i] == "<1H OCEAN" else 0.0
-        new_names["new_house"][i] = 1.0 if h["housing_median_age"][i] <= 8.0 else 0.0
-        new_names["people_per_house"][i] = np.round(h["population"][i] / h["households"][i])
-        new_names["median_house_value"][i] = h["median_house_value"][i]
-        new_names["coords_and_ocean_proximity"][i] = ((h["longitude"][i] + 360 + h["latitude"][i]) * ocean_map[h["ocean_proximity"][i]])
-        new_names["bedrooms_coeff"][i] = np.round(h["total_bedrooms"][i] / h["total_rooms"][i] if not np.isnan(h["total_bedrooms"][i]) else 1.0)
-        # new_names["rooms_per_people"][i] = np.round(h["total_rooms"][i]/h["households"][i])
+    for i in range(length):
+        row = ds.iloc[i]
+        print(row)
+        vectorizer = TfidfVectorizer()
 
-    dataset = pd.DataFrame(new_names)
-    return dataset
+        # vectorizer.fit(ds["name"].tolist())
+        # print(vectorizer.vocabulary)
+        # print(vectorizer.idf_)
+        # vector = vectorizer.transform(ds["name"].tolist())
+        # # summarize encoded vector
+        # print(vector.shape)
+        # print(vector.toarray()[0])
+        break
 
-def flip_csv(name, dataset=pd.DataFrame({})):
-    """
-    Меняет местами столбцы и строки в csv файле
-    :param name string название файла без расширения
-    :param dataset pd.DataFrame название файла без расширения
-    """
-    df = pd.read_csv(name + ".csv", index_col=0) if dataset.empty else dataset
-    df = df.T.groupby(level=0).agg(lambda x: x.values.tolist()).stack().apply(pd.Series).unstack().sort_index(level=1,
-                                                                                                              axis=1)
-    df.columns = df.columns.droplevel(level=0)
-    df.to_csv(path_or_buf=name + "_flipped.csv")
+
+def show_corr_matrix(ds, corr_val):
+    corr_matrix = ds.corr()
+    corr_matrix[corr_val].sort_values(ascending=False)
+    print(corr_matrix[corr_val])
+    corr_matrix.plot()
+    plt.show()
+
+
+def show_scatter_matrix(ds):
+    from pandas.plotting import scatter_matrix
+    attributes = ["year", "km_driven", "seats"]
+    scatter_matrix(ds[attributes], figsize=(12,8))
+    ds.plot(kind="scatter", x="year", y="selling_price", alpha=0.1)
+    plt.show()
+
+
+def show_confusion_matrix(ds):
+    mat = confusion_matrix(ds.select_dtypes(['number']), ds.select_dtypes(['number']))
+    sns.heatmap(mat.T, square=True, annot=True, fmt='d', cbar=False, xticklabels='data', yticklabels='data')
+    plt.show()
+
+
+def get_values_as_numbers(col):
+    unique = col.unique()
+    unique_indices = {}
+    for i, v in enumerate(unique):
+        unique_indices[v] = i+1  # присваиваем уникальные ключи
+
+    return list(map(lambda x: unique_indices[x], col.tolist()))
+
+
+def get_num_from_string(in_str, get_first=True):
+    num = 0
+    for n in in_str.split():
+        try:
+            num += float(n)
+            if get_first:
+                break
+        except ValueError:
+            continue
+    return num
+
+
+def get_torque(in_str):
+    num = 0
+    matches = re.findall('\d+', in_str)
+    if len(matches) == 3:
+        try:
+            num = float(matches[0]) * (float(matches[1]) + float(matches[2])) / 2
+        except ValueError:
+            return num
+    elif len(matches) == 2:
+        try:
+            num = float(matches[0]) * float(matches[1])
+        except ValueError:
+            return num
+    else:
+        try:
+            num = float(matches[0])
+        except ValueError:
+            return num
+    return num
+
+
+def clean_dataset(ds):
+    ds = ds.drop(columns=['name'])
+    ds = ds[~pd.isnull(ds).any(axis=1)]  # очищаем датасет от пустых значений
+
+    ds['fuel'] = get_values_as_numbers(ds['fuel'])
+    ds['owner'] = get_values_as_numbers(ds['owner'])
+    ds['seller_type'] = get_values_as_numbers(ds['seller_type'])
+    ds['transmission'] = get_values_as_numbers(ds['transmission'])
+    ds['mileage'] = [get_num_from_string(s) for s in ds['mileage']]
+    ds['engine'] = [get_num_from_string(s) for s in ds['engine']]
+    ds['max_power'] = [get_num_from_string(s) for s in ds['max_power']]
+    ds['torque'] = [get_torque(s) for s in ds['torque']]
+
+    return ds
 
 
 sns.set()
-# housing_casual = pd.read_csv("../2lab/housing.csv")
-# housing_casual = prepare_housing(housing_casual)
-#
-# flip_csv("housing_new", housing_casual)
 
-housing = pd.read_csv("housing_new_flipped.csv", index_col=0)
-housing.columns = housing.columns.astype(int)
-prepared = prepare_housing_dataset(housing, 80)
-x = prepared['train_data']
-y = prepared['train_target']
-print(y)
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', None)
+
+cars = pd.read_csv("Car_details_v3.csv")
+
+
+
+cars = clean_dataset(cars)
+# show_corr_matrix(cars, 'selling_price')
+# show_confusion_matrix(cars)
+
+y = cars['selling_price']
+x = cars.drop(columns='selling_price')
+
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=45)
+
+
 from sklearn.linear_model import LinearRegression
-model = LinearRegression(fit_intercept=True)
-model.fit(x, y)
-labels = model.predict(prepared['test_data'])
-print(prepared["test_target"])
-print(r2_score(prepared["test_target"], labels))
-# mat = confusion_matrix(prepared["test_target"], labels)
-# sns.heatmap(mat.T, square=True, annot=True, fmt='d', cbar=False,
-#             xticklabels=prepared["target_names"], yticklabels=prepared["target_names"])
-# plt.xlabel('true median house value')
-# plt.ylabel('predicted median house value')
-print("Model slope: ", model.coef_)
-print("Model intercept:", model.intercept_)
+# model = LinearRegression(fit_intercept=True)
+#
+# model.fit(X_train, y_train)
+# # print("Model slope: ", model.coef_[0])
+# # print("Model intercept:", model.intercept_)
+#
+# y_predicted = model.predict(X_test)
+#
+#
+# print("SCORE casual:")
+# print(r2_score(y_test, y_predicted))
 
+poly_model = make_pipeline(PolynomialFeatures(2), LinearRegression())
+
+poly_model.fit(X_train, y_train)
+
+y_poly = poly_model.predict(X_test)
+
+print("SCORE:")
+print(r2_score(y_test, y_poly))
+
+poly_model = make_pipeline(PolynomialFeatures(2), LinearRegression())
+
+poly_model.fit(X_train, y_train)
+
+y_poly = poly_model.predict(X_test)

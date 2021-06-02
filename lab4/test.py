@@ -91,4 +91,10 @@ yfit = poly_model.predict(xfit[:, np.newaxis])
 plt.scatter(x, y)
 plt.plot(xfit, yfit)
 
-
+# vectorizer = TfidfVectorizer()
+# vectorizer.fit(cars["name"].tolist())
+#
+# vector = vectorizer.transform(cars["name"].tolist())
+# # summarize encoded vector
+# print(np.sum(vector.toarray(), axis=1).tolist())
+# cars["name"] = np.sum(vector.toarray(), axis=1).tolist()
