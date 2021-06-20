@@ -8,33 +8,36 @@ def fill(img, h, w):
     return img
 
 
-def horizontal_shift(img, ratio=0.0):
-    if ratio > 1 or ratio < 0:
-        print('Value should be less than 1 and greater than 0')
+def horizontal_shift(img, ratio=0.0, do_fill = False):
+    if ratio > 1 or ratio < -1:
+        print('Value should be less than 1 and greater than -1')
         return img
-    ratio = random.uniform(-ratio, ratio)
+    # ratio = random.uniform(-ratio, ratio)
     h, w = img.shape[:2]
     to_shift = w * ratio
     if ratio > 0:
         img = img[:, :int(w - to_shift), :]
     if ratio < 0:
         img = img[:, int(-1 * to_shift):, :]
-    img = fill(img, h, w)
+    if do_fill:
+        img = fill(img, h, w)
     return img
 
 
-def vertical_shift(img, ratio=0.0):
-    if ratio > 1 or ratio < 0:
-        print('Value should be less than 1 and greater than 0')
+def vertical_shift(img, ratio=0.0, do_fill = False):
+    if ratio > 1 or ratio < -1:
+        print('Value should be less than 1 and greater than -1')
         return img
-    ratio = random.uniform(-ratio, ratio)
+    # ratio = random.uniform(-ratio, ratio)
     h, w = img.shape[:2]
     to_shift = h * ratio
     if ratio > 0:
         img = img[:int(h - to_shift), :, :]
     if ratio < 0:
         img = img[int(-1 * to_shift):, :, :]
-    img = fill(img, h, w)
+
+    if do_fill:
+        img = fill(img, h, w)
     return img
 
 
@@ -90,8 +93,8 @@ def vertical_flip(img, flag):
 
 
 def rotation(img, angle):
-    angle = int(random.uniform(-angle, angle))
+    # angle = int(random.uniform(-angle, angle))
     h, w = img.shape[:2]
     M = cv2.getRotationMatrix2D((int(w / 2), int(h / 2)), angle, 1)
-    img = cv2.warpAffine(img, M, (w, h))
+    img = cv2.warpAffine(img, M, (w, h), borderMode=cv2.BORDER_CONSTANT, borderValue=(255,255,255))
     return img

@@ -1,3 +1,6 @@
+# --------------get cyrillic chars to latin equivalents map because OpenCV can't handle unicode file names------------ #
+
+
 def chars_to_file_names():
     return {
         'а': 'sm-a',
