@@ -6,6 +6,9 @@ from pandas import DataFrame
 from sklearn.cluster import KMeans
 from sklearn.datasets import make_blobs
 from sklearn.manifold import TSNE
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import PolynomialFeatures
+
 
 def prepare_housing_dataset(h, training_percent):
     """
@@ -70,9 +73,11 @@ def get_start_points(data):
 
 
 sns.set()
-housing = pd.read_csv("housing_new_flipped.csv", index_col=0)
+housing = pd.read_csv("housing_3_flipped.csv", index_col=0)
 housing.columns = housing.columns.astype(int)
 prepared = prepare_housing_dataset(housing, 100)
+print([np.min(prepared["train_target"]), np.max(prepared["train_target"])])
+
 # from sklearn.preprocessing import StandardScaler
 # scaler = StandardScaler()# Fit on training set only.
 # scaler.fit(prepared["train_data"])# Apply transform to both the training set and the test set.
@@ -88,23 +93,25 @@ prepared = prepare_housing_dataset(housing, 100)
 # prepared['train_data'] = train_scaled
 # print(prepared['train_data'])
 
-borders = get_start_points(prepared['train_data'])
-print(borders['min'])
-print(borders['max'])
-kmeans = KMeans(n_clusters=6, random_state=0, init=np.ndarray(borders['min'], borders['max']))
+# borders = get_start_points(prepared['train_data'])
+# print(borders['min'])
+# print(borders['max'])
 
+kmeans = KMeans(n_clusters=6, random_state=45)
 clusters = kmeans.fit_predict(prepared['train_data'])
 
 
 
 from scipy.stats import mode
 labels = np.zeros_like(clusters)
+
 for i in range(6):
     mask = (clusters == i)
     labels[mask] = mode(prepared['train_target'][mask])[0]
 
 from sklearn.metrics import accuracy_score, confusion_matrix
 
+print([np.min(labels), np.max(labels)])
 print(accuracy_score(prepared['train_target'], labels))
 mat = confusion_matrix(prepared["train_target"], labels)
 sns.heatmap(mat.T, square=True, annot=True, fmt='d', cbar=False,

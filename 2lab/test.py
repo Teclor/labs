@@ -161,7 +161,7 @@ def prepare_housing(h):
         # new_names["1h_ocean"][i] = 1.0 if h["ocean_proximity"][i] == "<1H OCEAN" else 0.0
         new_names["new_house"][i] = 1.0 if h["housing_median_age"][i] <= 8.0 else 0.0
         new_names["people_per_house"][i] = np.round(h["population"][i] / h["households"][i])
-        new_names["median_house_value"][i] = np.round(h["median_house_value"][i] / 100000)
+        new_names["median_house_value"][i] = np.round(h["median_house_value"][i] / 200000)
         new_names["coords_and_ocean_proximity"][i] = ((h["longitude"][i] + 360 + h["latitude"][i]) * ocean_map[h["ocean_proximity"][i]])
         new_names["bedrooms_coeff"][i] = np.round(h["total_bedrooms"][i] / h["total_rooms"][i] if not np.isnan(h["total_bedrooms"][i]) else 1.0)
         # new_names["rooms_per_people"][i] = np.round(h["total_rooms"][i]/h["households"][i])
@@ -183,7 +183,7 @@ def main():
 
     plt.show()
 
-    flip_csv("housing_new", housing_casual)
+    # flip_csv("housing_3", housing_casual)
 
 
     # housing_casual = addrow(housing_casual)
@@ -216,7 +216,7 @@ def main():
     # plt.show()
 
     plt.figure(figsize=(16, 9))
-    housing = pd.read_csv("housing_new_flipped.csv", index_col=0)
+    housing = pd.read_csv("housing_3_flipped.csv", index_col=0)
     housing.columns = housing.columns.astype(int)
     prepared = prepare_housing_dataset(housing, 80)
 

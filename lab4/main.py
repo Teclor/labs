@@ -8,39 +8,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import r2_score
 import re
-from sklearn.model_selection import train_test_split
-
-
-def prepare_cars_dataset(ds):
-    length = ds.shape[0]
-    strLength = ds.shape[1]
-    prepared = {
-        "year": np.empty(shape=length, dtype=int),
-        "selling_price": np.empty(shape=length, dtype=int),
-        "km_driven": np.empty(shape=length, dtype=int),
-        "fuel": np.empty(shape=length, dtype=int),
-        "seller_type": np.empty(shape=length, dtype=int),
-        "transmission": np.empty(shape=length, dtype=int),
-        "owner": np.empty(shape=length, dtype=int),
-        "mileage": np.empty(shape=length, dtype=float),
-        "engine": np.empty(shape=length, dtype=int),
-        "max_power": np.empty(shape=length, dtype=int),
-        "torque": np.empty(shape=length, dtype=int),
-        "seats": np.empty(shape=length, dtype=int),
-    }
-    for i in range(length):
-        row = ds.iloc[i]
-        print(row)
-        vectorizer = TfidfVectorizer()
-
-        # vectorizer.fit(ds["name"].tolist())
-        # print(vectorizer.vocabulary)
-        # print(vectorizer.idf_)
-        # vector = vectorizer.transform(ds["name"].tolist())
-        # # summarize encoded vector
-        # print(vector.shape)
-        # print(vector.toarray()[0])
-        break
+from sklearn.model_selection import train_test_split, cross_val_score
 
 
 def show_corr_matrix(ds, corr_val):
@@ -71,7 +39,7 @@ def get_values_as_numbers(col):
     for i, v in enumerate(unique):
         unique_indices[v] = i+1  # присваиваем уникальные ключи
 
-    return list(map(lambda x: unique_indices[x], col.tolist()))
+    return list(map(lambda val: unique_indices[val], col.tolist()))
 
 
 def get_num_from_string(in_str, get_first=True):
@@ -110,6 +78,7 @@ def get_torque(in_str):
 def clean_dataset(ds):
     ds = ds.drop(columns=['name'])
     ds = ds[~pd.isnull(ds).any(axis=1)]  # очищаем датасет от пустых значений
+    ds = ds.drop(columns=['seats'])
 
     ds['fuel'] = get_values_as_numbers(ds['fuel'])
     ds['owner'] = get_values_as_numbers(ds['owner'])
@@ -129,7 +98,9 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
 cars = pd.read_csv("Car_details_v3.csv")
-
+y1 = cars['selling_price']
+x1 = cars.drop(columns='selling_price')
+X_train1, X_test1, y_train1, y_test1 = train_test_split(x1, y1, test_size=0.2, random_state=45)
 
 
 cars = clean_dataset(cars)
@@ -161,11 +132,18 @@ poly_model.fit(X_train, y_train)
 
 y_poly = poly_model.predict(X_test)
 
-print("SCORE:")
-print(r2_score(y_test, y_poly))
 
-poly_model = make_pipeline(PolynomialFeatures(2), LinearRegression())
 
-poly_model.fit(X_train, y_train)
+print("poly_model SCORE:")
+print(poly_model.score(X_test, y_test))
+predicted = poly_model.predict([X_test.iloc[161]])
+print('predicted')
 
-y_poly = poly_model.predict(X_test)
+print(predicted)
+print('real')
+print(y_test.iloc[161])
+print('cross val')
+print(cross_val_score(poly_model, X_test, y_test, cv=3))
+
+# print("r2 SCORE:")
+# print(r2_score(y_test, y_poly))

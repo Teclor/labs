@@ -47,6 +47,7 @@ def prepare_housing_dataset(h, training_percent):
 
 sns.set()
 housing = pd.read_csv("housing_new_flipped.csv", index_col=0)
+
 housing.columns = housing.columns.astype(int)
 prepared = prepare_housing_dataset(housing, 100)
 
