@@ -46,7 +46,7 @@ class Settings:
         self.save()
 
     def set_default(self):
-        self.set('FONT_LIST', {'Arial': 'Arial', 'Times New Roman': 'Times', 'Calibri': 'Calibril'})
+        self.set('FONT_LIST', {'Arial': 'arial', 'Times New Roman': 'times', 'Calibri': 'calibri'})
         self.set('DATASET_PATH', str(Path(__file__).absolute().parent) + '/datasets/letters')
         self.set('IMAGE_SIZE', 64)
         self.set('BATCH_SIZE', 32)

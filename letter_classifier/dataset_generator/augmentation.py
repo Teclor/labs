@@ -107,6 +107,8 @@ class Augmentation:
             g = Generator()
             g.generate()
 
+        print('Starting augmentation.')
+
         for required_size in self.letter_size_list:
             for font_dir in os.listdir('{}\\{}'.format(self.letters_initial_dir, required_size)):
                 for letter_dir in os.listdir('{}\\{}\\{}'.format(self.letters_initial_dir, required_size, font_dir)):

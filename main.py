@@ -3,11 +3,6 @@ from pathlib import Path
 from letter_classifier.dataset_generator.augmentation import Augmentation
 from letter_classifier.model import Model
 from letter_classifier.loader import DatasetLoader
-from sklearn.model_selection import train_test_split
-import pandas as pd
-import numpy as np
-from sklearn.metrics import accuracy_score
-from letter_classifier.dataset_generator import char_helper as ch
 from letter_classifier.preprocessor import *
 
 if __name__ == "__main__":

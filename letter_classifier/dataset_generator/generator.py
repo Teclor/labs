@@ -26,7 +26,7 @@ class Generator:
             for f in self.fonts:
                 for char in self.chars:
                     im = Image.new('RGB', (self.img_size, self.img_size), color='white')
-                    font = ImageFont.truetype('C:\\Windows\\Fonts\\{}.ttf'.format(self.fonts[f]), size=s)
+                    font = ImageFont.truetype('{}\\fonts\\{}.ttf'.format(Path(__file__).absolute().parent, self.fonts[f]), size=s)
                     draw_text = ImageDraw.Draw(im)
                     w, h = draw_text.textsize(char, font=font)
                     # line height is normally ~20% larger than the glyphs/characters(+ some trial and error)
