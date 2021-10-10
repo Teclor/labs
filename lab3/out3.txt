@@ -1,3 +1,3 @@
-    Perl is a very useful programming language.
-It is commonly used for text data processing.
-   Programming is easy when you use perl.
+Perl is intuitively understandable.
+Perl is the best language to start education with.
+

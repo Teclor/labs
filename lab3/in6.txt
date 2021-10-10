@@ -1,0 +1,3 @@
+The task is to determine the number of letters in the text.
+It is also needed to count the number of lines and words.
+The end of the text in this file.

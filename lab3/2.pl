@@ -10,7 +10,7 @@ foreach my $firstMultiplier (@digits) { # цикл по всем цифрам в
     $multiplicationTable .= "\n";
 }
 
-my $rootDir = 'C:\Users\Core i7\Desktop\Studying\Perl\lab3\\';
+my $rootDir = '';
 my $filePath = "${rootDir}multiplication_table.txt";
 open(my $fileHandle, '>', $filePath) or die ("Error while opening file $filePath: $!\n"); # открываем для записи
 print($fileHandle $multiplicationTable); # записываем таблицу умножения в файл

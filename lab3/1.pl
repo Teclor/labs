@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-my $rootDir = 'C:\Users\Core i7\Desktop\Studying\Perl\lab3\\';
+my $rootDir = '';
 my $inFileName = "${rootDir}in1.txt";
 my $outFileName = "${rootDir}out1.txt";
 

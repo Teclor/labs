@@ -1,0 +1,2 @@
+This file contains some list of words.
+The task is to move these words to another file numbering them.
