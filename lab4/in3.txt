@@ -1,0 +1,3 @@
+Perl is widely renowned for excellence in text processing, and regular expressions are one of the big factors behind this fame.
+Perl regular expressions display an efficiency and flexibility unknown in most other computer languages.
+Mastering even the basics of regular expressions will allow you to manipulate text with surprising ease.
