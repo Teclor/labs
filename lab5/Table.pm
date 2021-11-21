@@ -124,9 +124,9 @@ package Table; {
         my $linesRef = $self->{lines};
         my $idToSearch = shift;
         my $index = -1;
-        for my $hash (@$linesRef) {
+        while (my ($lineIndex, $hash) = each @$linesRef) {
             if ($hash->{ID} eq $idToSearch) {
-                $index = $hash->{ID};
+                $index = $lineIndex;
                 last;
             }
         }
