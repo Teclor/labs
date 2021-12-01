@@ -1,2 +1,2 @@
-https://github.com/teclor/labs/
+https://github.com/Teclor/labs/branches/all
 Repository with labs. A branch for each subject.
