@@ -1,0 +1,3 @@
+стул-chair,stool
+еда-food,meal
+блокнот-notepad,notebook,writing pad

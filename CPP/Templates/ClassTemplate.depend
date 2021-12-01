@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1569468534 source:d:\Все что нуно тут\studying\Лабы\Инфа\classtemplate\main.cpp
+	<iostream>
+
+1569478272 source:f:\Инфа\classtemplate\main.cpp
+	<iostream>
+	<cmath>
+	<windows.h>
+
