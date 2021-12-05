@@ -1,9 +1,9 @@
 #!/bin/bash
-IFS=':';
-read -ra PATH_LIST <<< "$PATH";
+IFS=':'
+read -ra pathArray <<<"$PATH"
 
-for path in "${PATH_LIST[@]}"; do
-	if [ ! -d "$path" ]; then
-		echo "Path $path is not correct!";
-	fi
+for path in "${pathArray[@]}"; do
+  if [ ! -d "$path" ]; then
+    echo "Path $path is not correct!"
+  fi
 done

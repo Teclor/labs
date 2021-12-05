@@ -17,10 +17,7 @@ if [ -z "$fileModificationDayLimit" ]; then
 	exit 1;
 fi
 
-
-
-
-if [ -n "$filesDir" ]; then
+if [ -d "$filesDir" ]; then
 	IFS=$'\n';
 	files=$(ls -lQ --full-time "$filesDir" | egrep "\".+\.$filesExt\"$");
 	read -rd '' -a fileDataArray <<< "$files";
@@ -33,6 +30,6 @@ if [ -n "$filesDir" ]; then
     		fi	
 	done
 else
-	echo "Please, enter not empty files search directory as the third argument";
+	echo "Please, enter not correct files search directory as the third argument";
 	exit 1;
 fi
