@@ -1,5 +1,4 @@
 ID	NAME	BIRTH DATE	ADDRESS	MEMBERSHIP BEGIN DATE	TYPE	YEAR	GROUP	BOOKS	ISSUE DATE
 1	Belov Roman Sergeevich	05.07.1998	Pushkina 25	07.08.2020	Postgraduate	1	154	Bahvalov: Numerical methods 	30.07.2021
-3	Krasnova Darya Fedorovna	21.08.2018	Krasnoarmeyskaya 18	17.08.1990	Employee	-	-	Richter: CLR via C#; Schildt: C# complete reference	09.10.2021
 2	Petrov Sergei Vasilyevich	20.01.2001	Elezkaya 78, 25	05.02.2021	Student	2	195	Demidovich: mathematical analysis task collection	05.09.2021
-15	Sergei	30.08.1998	Pushkina 5	20.05.2020	Student	2	172	History of mathematics	05.09.2021
+3	Krasnova Darya Fedorovna	21.08.2018	Krasnoarmeyskaya 18	17.08.1990	Employee	-	-	Richter: CLR via C#; Schildt: C# complete reference	09.10.2021
