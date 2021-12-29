@@ -1,0 +1,5 @@
+Good string
+
+ bad string
+ bad string
+  very bad string
