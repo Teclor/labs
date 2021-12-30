@@ -1,10 +1,8 @@
 use strict;
 use warnings FATAL => 'all';
-use Cwd;
-my $cwd = cwd();
-print "Current working directory: '$cwd()'";
+
 $\ = "\n";
-# -----------------------открытие и считывание файла---------------------
+# -----------------------работа с файлами---------------------
 sub getFileContents {
     my $fileName = shift;
     my $inFilePath = "task_1/$fileName.txt";
@@ -16,19 +14,35 @@ sub getFileContents {
     close($fileHandle);
     return $textFromFile;
 }
-# -----------------------/открытие и считывание файла---------------------
+
+sub putFileContents {
+    my $fileName = shift;
+    my $textForFile = shift;
+    my $outFilePath = "$fileName.txt";
+    open (my $fileHandle, '>>:encoding(UTF-8)', $outFilePath) or die ("Error while opening file $outFilePath: $!\n"); # открываем файл для дозаписи в конец
+    print $fileHandle $textForFile;
+    close($fileHandle);
+}
+# -----------------------/работа с файлами---------------------
 # --------------вывод строк, соответствующих регулярному выражению--------
 sub showMatchedStringsInFile {
     my $fileName = shift;
     my $checkFunction = shift;
     my $textFromFile = getFileContents($fileName);
-    print ("-------Input from $fileName :--------\n" . $textFromFile . "\n--------Output for $fileName:--------");
+    my $outText = "-------Input from $fileName :--------\n" . $textFromFile . "\n--------Output for $fileName:--------";
+    print ($outText);
+    $outText .= "\n";
     my @linesFromText = split("\n", $textFromFile);
+    my $checkedLines = "";
     for my $line (@linesFromText) {
         if ($checkFunction->($line)) {
             print $line;
+            $checkedLines .= $line . "\n";
         }
     }
+    chomp($checkedLines);
+    $outText .= $checkedLines;
+    putFileContents('task_1_out', $outText);
 }
 # -------------/вывод строк, соответствующих регулярному выражению--------
 

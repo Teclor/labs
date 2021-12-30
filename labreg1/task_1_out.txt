@@ -1,0 +1,84 @@
+-------Input from 1_1 :--------
+catcat
+cat and cat
+catac
+cat
+ccaatt
+--------Output for 1_1:--------
+catcat
+cat and cat
+-------Input from 1_2 :--------
+zabcz
+zzxzz
+zzz
+zz
+zxz
+zzxzxxz
+--------Output for 1_2:--------
+zabcz
+zzxzz
+-------Input from 1_3 :--------
+xabcabcz
+zzzzzzzzzzzzzzzzzz
+xx
+xyz
+zwzwwz
+--------Output for 1_3:--------
+xabcabcz
+zzzzzzzzzzzzzzzzzz
+-------Input from 1_4 :--------
+Year is 2009.
+1 is a number
+3.1415 matches because . is not a word char
+Not2Bad
+No digits here
+--------Output for 1_4:--------
+Year is 2009.
+1 is a number
+3.1415 matches because . is not a word char
+-------Input from 1_5 :--------
+\w denotes word character
+No slashes here
+--------Output for 1_5:--------
+\w denotes word character
+-------Input from 1_6 :--------
+good (excellent) phrase
+good (too bad) phrase
+good ((recursive)) phrase
+word () is not () in brackets
+bad (() recursive) phrase
+no brackets here
+--------Output for 1_6:--------
+good (excellent) phrase
+good ((recursive)) phrase
+-------Input from 1_7 :--------
+Good string
+
+ bad string
+ bad string
+  very bad string
+--------Output for 1_7:--------
+Good string
+
+-------Input from 1_8 :--------
+blabla is a tandem repetition
+123123 is good too
+go go
+aaa
+abcabc
+--------Output for 1_8:--------
+blabla is a tandem repetition
+123123 is good too
+abcabc
+-------Input from 1_9 :--------
+0
+10010
+00101
+Not a number
+11
+00
+--------Output for 1_9:--------
+0
+10010
+11
+00
