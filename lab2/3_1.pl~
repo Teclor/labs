@@ -1,0 +1,1 @@
+song:- write('бегу,'),song.

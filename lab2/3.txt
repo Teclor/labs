@@ -1,0 +1,31 @@
+3.1
+write('Я '),song.
+write('Я '),song(3),write('бегу по гаревой дорожке').
+3.2
+factorial(3,X).
+factorial(1,X).
+factorial(0,X).
+3.3
+factorial(3,F).
+3.4
+factorial(4,F).
+3.5
+kurs(1,X). //X = gruppa('Шекспир', gruppa('Мольер', gruppa('Чехов', empty))).
+kurs(N,gruppa(X,Y)).
+/*
+N = 1,
+X = 'Шекспир',
+Y = gruppa('Мольер', gruppa('Чехов', empty)) 
+*/
+kurs(N1,gruppa(X, gruppa(Y,Z))).
+/*
+N1 = 1,
+X = 'Шекспир',
+Y = 'Мольер',
+Z = gruppa('Чехов', empty) 
+*/
+3.6
+fib(5,R).
+3.7
+fib_sum_even(5,R).
+fib_sum_odd(5,R).
