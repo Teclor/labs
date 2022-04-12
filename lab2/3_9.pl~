@@ -11,5 +11,5 @@ akkerman_f(X,Y,A):-
     Y1 is Y-1,
     X1 is X - 1,
     akkerman_f(X,Y1,A1),
-    akkerman_f(X1,A1,A2),
+    akkerman_F(X1,A1,A2),
     A is A2.
